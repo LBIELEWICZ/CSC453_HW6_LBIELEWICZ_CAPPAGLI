@@ -1,13 +1,17 @@
+import java.util.*;
+
 public class ASTNode {
 	
 	public enum NodeType {
-		OP, NUM, ID, IF, WHILE, ASSG, SLIST, PROG, RELOP, COMP, FUNC, AND, OR, FLIST;
+		OP, NUM, ID, IF, WHILE, ASSG, SLIST, PROG, RELOP, COMP, FUNC, AND, OR, FLIST, PLIST, PARAM, RET, ALIST, ARG;
 	}
 	
 	private ASTNode left = null;
 	private ASTNode right = null;
 	private String val = null;
 	private NodeType type;
+	private ArrayList<ASTNode> params = null;
+	private ArrayList<ASTNode> args = null;
 	private int id;
 	private int tID;
 	private int fID;
@@ -17,6 +21,26 @@ public class ASTNode {
 
 	public ASTNode(ASTNode.NodeType type) {
 		this.type = type;
+	}
+
+	public ArrayList<ASTNode> getArgs() {
+		return args;
+	}
+
+	public void addArg(ASTNode arg) {
+		if (args == null)
+			args = new ArrayList<>();
+		args.add(arg);
+	}
+
+	public ArrayList<ASTNode> getParams() {
+		return params;
+	}
+
+	public void addParam(ASTNode param) {
+		if (params == null)
+			params = new ArrayList<>();
+		params.add(param);
 	}
 
 	public NodeType getType() {

@@ -2,7 +2,7 @@ import java.util.LinkedList;
 
 class Token{
   enum TokenType{
-    NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, OP, CP, ID, ASSG, EQ, NEQ, INT, END, OB, CB, IF, WHILE, VOID, PUBLIC, PRIVATE, CLASS, AND, OR;
+    NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, OP, CP, ID, ASSG, EQ, NEQ, INT, END, OB, CB, IF, WHILE, VOID, PUBLIC, PRIVATE, CLASS, AND, OR, RETURN;
   }
 
   TokenType tokenType;
@@ -90,6 +90,12 @@ public class Scanner{
       itr = itr + 5;
     }
     
+    // Handling a RETURN Token
+    else if (stream.length() > 6 && stream.substring(itr, itr+7).equals("return")) {
+      ret = new Token(Token.TokenType.RETURN, "return");
+      itr = itr + 7;
+    }
+
     // Handling an ID token
     else if ((tokChar >= 'a' && tokChar <= 'z') || (tokChar >= 'A' && tokChar <= 'Z')) {
       String id = "";
