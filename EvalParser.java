@@ -50,7 +50,7 @@ public class EvalParser {
       System.exit(1);
     }
 
-    ASTNode left = threeAddrId(tokens, true, true); // Match ID of program
+    ASTNode left = threeAddrId(tokens, true, true, false); // Match ID of program
     ASTNode currNode = left;
     if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.OB){
       tokens.remove();
@@ -171,7 +171,7 @@ public class EvalParser {
   public ASTNode threeAddrFunc(LinkedList<Token> tokens) {
     ASTNode op = new ASTNode(ASTNode.NodeType.FUNC);
     threeAddrRetType(tokens);// Match program type
-    ASTNode left = threeAddrId(tokens, true, true); // Match ID of function
+    ASTNode left = threeAddrId(tokens, true, true, false); // Match ID of function
     ASTNode currNode = left;
     if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.OP){
       tokens.remove();
@@ -229,7 +229,7 @@ public class EvalParser {
       System.out.println("ERROR: Invalid declaration type");
       System.exit(1);
     }
-    ASTNode currNode = threeAddrId(tokens, true, globalFlag);
+    ASTNode currNode = threeAddrId(tokens, true, globalFlag, false);
     
     return currNode;
   }
@@ -243,7 +243,7 @@ public class EvalParser {
       System.out.println("ERROR: Invalid declaration type");
       System.exit(1);
     }
-    ASTNode currNode = threeAddrId(tokens, true, globalFlag);
+    ASTNode currNode = threeAddrId(tokens, true, globalFlag, true);
     
     return currNode;
   }
@@ -410,7 +410,7 @@ public class EvalParser {
       left = threeAddrVarDecl(tokens, globalFlag);
     }
     else {
-      left = threeAddrId(tokens, false, globalFlag);
+      left = threeAddrId(tokens, false, globalFlag, false);
     }
     ASTNode currNode = left; 
     if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.ASSG){
@@ -656,7 +656,7 @@ public class EvalParser {
         op.setRight(right);
         op.setID(tempID);
         // Used to keep the original value intact for returns
-        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT));
+        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT, false));
         tempID++;
         currNode = op;
         left = currNode;
@@ -670,7 +670,7 @@ public class EvalParser {
         ASTNode right = threeAddrT(tokens);
         op.setRight(right);
         op.setID(tempID);
-        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT));
+        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT, false));
         tempID++;
         currNode = op;
         left = currNode;
@@ -695,7 +695,7 @@ public class EvalParser {
         ASTNode right = threeAddrF(tokens);
         op.setRight(right);
         op.setID(tempID);
-        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT));
+        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT, false));
         tempID++;
         currNode = op;
         left = currNode;
@@ -709,7 +709,7 @@ public class EvalParser {
         ASTNode right = threeAddrF(tokens);
         op.setRight(right);
         op.setID(tempID);
-        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT));
+        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT, false));
         tempID++;
         currNode = op;
         left = currNode;
@@ -741,7 +741,7 @@ public class EvalParser {
       currNode = new ASTNode(ASTNode.NodeType.NUM);
       currNode.setVal("" + tokens.peek().tokenVal);
       currNode.setID(tempID);
-      localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT));
+      localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT, false));
       this.tempID++;
       tokens.remove();
     }
@@ -804,7 +804,7 @@ public class EvalParser {
     return root;
   }
 
-  public ASTNode threeAddrId(LinkedList<Token> tokens, boolean dec, boolean globalFlag) {
+  public ASTNode threeAddrId(LinkedList<Token> tokens, boolean dec, boolean globalFlag, boolean isParam) {
     ASTNode id = new ASTNode(ASTNode.NodeType.ID);
     String name = "";
     // Create a node that holds the name of the ID
@@ -823,9 +823,9 @@ public class EvalParser {
         }
         else {
           if (globalFlag)
-            globalSymTab.put(name, new SymbolData(SymbolType.INT));
+            globalSymTab.put(name, new SymbolData(SymbolType.INT, false));
           else
-            localSymTab.put(name, new SymbolData(SymbolType.INT));
+            localSymTab.put(name, new SymbolData(SymbolType.INT, isParam));
         }
       }
       else {

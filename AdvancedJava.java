@@ -145,7 +145,7 @@ public class AdvancedJava {
 					else if(tac.getOp() == TACObject.OpType.CALL) {
 						str = "ra = &&retLabel" + tac.getSrc2() + ";\n";
 						str = str + "goto " + tac.getSrc1() + "\n";
-						str = str + "retLabel" + tac.getSrc2() + "\n";
+						str = str + "retLabel" + tac.getSrc2() + ":\n";
 						str = str + "sp + " + symTab.get(tac.getSrc1()).getArgNum() + ";\n"; 
 					}
 					else if(tac.getOp() == TACObject.OpType.RETRIEVE) {

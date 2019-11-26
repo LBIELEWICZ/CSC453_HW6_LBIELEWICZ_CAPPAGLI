@@ -25,11 +25,18 @@ public class CodeGenTuple {
 
 	public void setOffset() {
 		int off = 0;
+		int paramOff = -3;
 		for(Map.Entry<String,SymbolData> entry : symbolTable.entrySet()){
 			String key = entry.getKey();
 			SymbolData value = entry.getValue();
-			value.setOffset(off);
-			off++;
+			if (value.isParam()) {
+				value.setOffset(off);
+				off++;
+			}
+			else {
+				value.setOffset(paramOff);
+				paramOff--;
+			}
 		}
 	}
 
