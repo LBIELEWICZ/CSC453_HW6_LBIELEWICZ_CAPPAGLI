@@ -8,6 +8,7 @@ public class ASTNode {
 	
 	private ASTNode left = null;
 	private ASTNode right = null;
+	private ASTNode extra = null;
 	private String val = null;
 	private NodeType type;
 	private ArrayList<ASTNode> params = null;
@@ -55,6 +56,10 @@ public class ASTNode {
 		return right;
 	}
 
+	public ASTNode getExtra() {
+		return extra;
+	}
+
 	public String getVal() {
 		return val;
 	}
@@ -93,6 +98,10 @@ public class ASTNode {
 
 	public void setRight(ASTNode node) {
 		right = node;
+	}
+
+	public void setExtra(ASTNode node) {
+		extra = node;
 	}
 
 	public void setID(int id) {

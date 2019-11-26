@@ -111,26 +111,56 @@ public class EvalParser {
     return root;
   }
 
-  public ASTNode threeAddrFunc(LinkedList<Token> tokens) {
-    ASTNode op = new ASTNode(ASTNode.NodeType.FUNC); // Match program type
+  public ASTNode threeAddrRetType(LinkedList<Token> tokens) {
     if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.VOID){
       tokens.remove();
     }
+    else if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.INT){
+      tokens.remove();
+    }
     else {
-      // Invalid program type
-      System.out.println("ERROR: Invalid program type");
+      // Invalid declaration type
+      System.out.println("ERROR: Invalid return type");
       System.exit(1);
     }
+    ASTNode currNode = null;
+    
+    return currNode;
+  }
 
+  public ASTNode threeAddrRet(LinkedList<Token> tokens) {
+    ASTNode currNode = null; 
+    if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.RET){
+      currNode = new ASTNode(ASTNode.NodeType.RET);
+      tokens.remove();
+      ASTNode right = threeAddrC(tokens);
+
+      currNode.setRight(right);
+      left = currNode;
+      if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.END){
+        tokens.remove();
+      }
+      else {
+        // Invalid assignment
+        System.out.println("ERROR: Invalid assignment");
+        System.exit(1);
+      }
+    }
+    return currNode;
+  }
+
+  public ASTNode threeAddrFunc(LinkedList<Token> tokens) {
+    ASTNode op = new ASTNode(ASTNode.NodeType.FUNC);
+    threeAddrRetType(tokens);// Match program type
     ASTNode left = threeAddrId(tokens, true, true); // Match ID of function
     ASTNode currNode = left;
     if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.OP){
       tokens.remove();
+      left.setRight(threeAddrParamLst(tokens));
       if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.CP){
         tokens.remove();
         if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.OB){
           tokens.remove();
-          //scope++;
           CodeGenTuple currTuple = new CodeGenTuple(left.getVal());
           op.setLeft(left);
           ASTNode right = threeAddrStmtLst(tokens, true); // Match statements in program
@@ -141,7 +171,7 @@ public class EvalParser {
           localSymTab = new TreeMap<>();
           currTuple.setRoot(op);
           codeGen.add(currTuple);
-          //scope--;
+          op.setExtra(threeAddrRet(tokens));
           if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.CB){
             tokens.remove();
           }
@@ -196,8 +226,8 @@ public class EvalParser {
           list = new ASTNode(ASTNode.NodeType.FLIST);
         else
           list = new ASTNode(ASTNode.NodeType.SLIST);
-	if (root == null)
-	  root = list;
+        if (root == null)
+          root = list;
         if (prev != null)
           prev.setRight(list);
         list.setLeft(left);
