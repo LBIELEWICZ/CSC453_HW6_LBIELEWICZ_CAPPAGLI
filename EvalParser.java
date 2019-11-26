@@ -74,35 +74,53 @@ public class EvalParser {
   public ASTNode threeAddrProgLst(LinkedList<Token> tokens) {
     ASTNode root = null;
     ASTNode prev = null;
+    Token t1, t2;
     while(true) {
-      if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.INT){
-        ASTNode left = threeAddrVarDecl(tokens, true);
-        ASTNode list = new ASTNode(ASTNode.NodeType.SLIST);
+      if(tokens.peek() != null){
+        t1 = tokens.pop();
+        if(tokens.peek() != null){
+          t2 = tokens.pop();
+          if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.END){
+            tokens.push(t2);
+            tokens.push(t1);
+            ASTNode left = threeAddrVarDecl(tokens, true);
+            ASTNode list = new ASTNode(ASTNode.NodeType.SLIST);
 
-        if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.END){
-          tokens.remove();
+            if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.END){
+              tokens.remove();
+            }
+            else {
+              // Invalid program list
+              System.out.println("ERROR: Invalid program list");
+              System.exit(1);
+            }
+            if (root == null)
+              root = list;
+            if (prev != null)
+              prev.setRight(list);
+            list.setLeft(left);
+            prev = list;
+          }
+          else if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.OP){
+            tokens.push(t2);
+            tokens.push(t1);
+            ASTNode left = threeAddrFunc(tokens);
+            ASTNode list = new ASTNode(ASTNode.NodeType.FLIST);
+            if (root == null)
+              root = list;
+            if (prev != null)
+              prev.setRight(list);
+            list.setLeft(left);
+            prev = list;
+          }
+          else{
+            tokens.push(t2);
+            tokens.push(t1);
+          }
         }
-        else {
-          // Invalid program list
-          System.out.println("ERROR: Invalid program list");
-          System.exit(1);
+        else{
+          tokens.push(t1);
         }
-        if (root == null)
-          root = list;
-        if (prev != null)
-          prev.setRight(list);
-        list.setLeft(left);
-        prev = list;
-      }
-      else if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.VOID){
-        ASTNode left = threeAddrFunc(tokens);
-        ASTNode list = new ASTNode(ASTNode.NodeType.FLIST);
-        if (root == null)
-          root = list;
-        if (prev != null)
-          prev.setRight(list);
-        list.setLeft(left);
-        prev = list;
       }
       else {
         break;
