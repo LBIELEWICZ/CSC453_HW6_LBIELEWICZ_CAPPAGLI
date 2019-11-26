@@ -233,6 +233,42 @@ public class EvalParser {
     return currNode;
   }
 
+  public ASTNode threeAddrParam(LinkedList<Token> tokens, boolean globalFlag) {
+    if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.INT){
+      tokens.remove();
+    }
+    else {
+      // Invalid declaration type
+      System.out.println("ERROR: Invalid declaration type");
+      System.exit(1);
+    }
+    ASTNode currNode = threeAddrId(tokens, true, globalFlag);
+    
+    return currNode;
+  }
+
+  public ASTNode threeAddrParamLst(LinkedList<Token> tokens) {
+    ASTNode root = null; //left;
+    ASTNode prev = null;
+    while(true) {
+      if (tokens.peek() != null && tokens.peek().tokenType != Token.TokenType.CP){
+        ASTNode left = threeAddrParam(tokens);
+        ASTNode list = null;
+        list = new ASTNode(ASTNode.NodeType.PLIST);
+        if (root == null)
+          root = list;
+        if (prev != null)
+          prev.setRight(list);
+        list.setLeft(left);
+        prev = list;
+      }
+      else {
+        break;
+      }
+    }
+    return root;
+  }
+
   public ASTNode threeAddrStmtLst(LinkedList<Token> tokens, boolean isFunction) {
     ASTNode root = null; //left;
     ASTNode prev = null;
@@ -706,8 +742,20 @@ public class EvalParser {
       currNode = new ASTNode(ASTNode.NodeType.ID);
       currNode.setVal(tokens.peek().tokenVal);
       currNode.setID(tempID);
- 
       tokens.remove();
+      if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.OP){
+        tokens.remove();
+        list = threeAddrArgLst(tokens);
+        currNode.setLeft(list);
+        if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.CP) {
+          tokens.remove();
+        }
+        else {
+          // Handle invalid sequences of tokens (i.e. 1++1)i
+          System.out.println("ERROR1: Expression not supported by grammar");
+          System.exit(1);
+        }
+      }
     }
     else {
       // If a factor has reached this point it is not an operation supported by this parser
@@ -716,6 +764,33 @@ public class EvalParser {
     } 
     
     return currNode;
+  }
+
+  public ASTNode threeAddrArg(LinkedList<Token> tokens) {
+    ASTNode currNode = threeAddrC(tokens);
+    return currNode;
+  }
+
+  public ASTNode threeAddrArgLst(LinkedList<Token> tokens) {
+    ASTNode root = null; //left;
+    ASTNode prev = null;
+    while(true) {
+      if (tokens.peek() != null && tokens.peek().tokenType != Token.TokenType.CP){
+        ASTNode left = threeAddrArg(tokens);
+        ASTNode list = null;
+        list = new ASTNode(ASTNode.NodeType.PLIST);
+        if (root == null)
+          root = list;
+        if (prev != null)
+          prev.setRight(list);
+        list.setLeft(left);
+        prev = list;
+      }
+      else {
+        break;
+      }
+    }
+    return root;
   }
 
   public ASTNode threeAddrId(LinkedList<Token> tokens, boolean dec, boolean globalFlag) {
