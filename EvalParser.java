@@ -147,7 +147,8 @@ public class EvalParser {
   }
 
   public ASTNode threeAddrRet(LinkedList<Token> tokens) {
-    ASTNode currNode = null; 
+    ASTNode currNode = null;
+    ASTNode left = null; 
     if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.RET){
       currNode = new ASTNode(ASTNode.NodeType.RET);
       tokens.remove();
@@ -252,7 +253,7 @@ public class EvalParser {
     ASTNode prev = null;
     while(true) {
       if (tokens.peek() != null && tokens.peek().tokenType != Token.TokenType.CP){
-        ASTNode left = threeAddrParam(tokens);
+        ASTNode left = threeAddrParam(tokens, false);
         ASTNode list = null;
         list = new ASTNode(ASTNode.NodeType.PLIST);
         if (root == null)
@@ -739,6 +740,7 @@ public class EvalParser {
       tokens.remove();
     }
     else if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.ID) {
+      ASTNode list = null;
       currNode = new ASTNode(ASTNode.NodeType.ID);
       currNode.setVal(tokens.peek().tokenVal);
       currNode.setID(tempID);

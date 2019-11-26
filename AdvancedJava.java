@@ -23,7 +23,7 @@ public class AdvancedJava {
 					"#include <inttypes.h>\n"+
 					"\n"+
 					"int main(int argc, char **argv){\n"+
-					"int64_t r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0;\n"+
+					"int64_t r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0, va = 0;\n"+
 					"int64_t stack[100];\n"+
 					"int64_t *sp = &stack[99];\n"+
 					"int64_t *fp = &stack[99];\n"+
@@ -132,6 +132,27 @@ public class AdvancedJava {
 					}
 					else if(tac.getOp() == TACObject.OpType.GOTO){
 						str = "goto " + tac.getDest() + ";\n";
+					}
+					else if(tac.getOp() == TACObject.OpType.PARAM) {
+						str = "sp = sp - 1;\n";
+						if (symTab.containsKey(tac.getSrc1()))
+							str = str + "*(sp+1) = *(fp-(" + 
+								symTab.get(tac.getSrc1()).getOffset() + "));\n";
+						else {
+							System.out.println("ERROR: Code gen - ID has no offset.");
+						}
+					}
+					else if(tac.getOp() == TACObject.OpType.CALL) {
+						str = "ra = &&retLabel" + tac.getSrc2() + ";\n";
+						str = str + "goto " + tac.getSrc1() + "\n";
+						str = str + "retLabel" + tac.getSrc2() + "\n";
+						str = str + "sp + " + symTab.get(tac.getSrc1()).getArgNum() + ";\n"; 
+					}
+					else if(tac.getOp() == TACObject.OpType.RETRIEVE) {
+						str = "*(fp-(" + symTab.get(tac.getSrc1()).getOffset() + ")) = va;\n";
+					}
+					else if (tac.getOp() == TACObject.OpType.RETURN) {
+						str = "va = *(fp-(" + symTab.get(tac.getSrc1()).getOffset() + "));\n";
 					}
 					else{ //Control Flow
 						if(symTab.containsKey(tac.getSrc1())){
