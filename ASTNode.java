@@ -3,7 +3,7 @@ import java.util.*;
 public class ASTNode {
 	
 	public enum NodeType {
-		OP, NUM, ID, IF, WHILE, ASSG, SLIST, PROG, RELOP, COMP, FUNC, AND, OR, FLIST, PLIST, PARAM, RET, ALIST, ARG;
+		OP, NUM, ID, IF, WHILE, ASSG, SLIST, PROG, RELOP, COMP, FUNC, AND, OR, FLIST, PLIST, PARAM, RET, ALIST, ARG, CALL;
 	}
 	
 	private ASTNode left = null;
