@@ -755,8 +755,12 @@ public class EvalParser {
         tokens.remove();
         ASTNode call = new ASTNode(ASTNode.NodeType.CALL);
         list = threeAddrArgLst(tokens);
-        call.setLeft(currNode);
-        call.setRight(list);
+        call.setRight(currNode);
+        call.setLeft(list);
+        call.setID(tempID);
+        // Used to keep the original value intact for returns
+        localSymTab.put("temp" + tempID, new SymbolData(SymbolType.INT, false));
+        tempID++;
         currNode = call;
         if (tokens.peek() != null && tokens.peek().tokenType == Token.TokenType.CP) {
           tokens.remove();
@@ -1150,7 +1154,15 @@ public class EvalParser {
     else if (root.getType() == ASTNode.NodeType.CALL){
       str = root.getLeft().getVal();
       str1 = root.getVal();
-      obj = new TACObject(TACObject.OpType.PARAM, str, str1, null);
+      obj = new TACObject(TACObject.OpType.CALL, str, str1, null);
+      tacs.add(obj);
+      str = "temp" + root.getID();
+      obj = new TACObject(TACObject.OpType.RETRIEVE, str, null, null);
+      tacs.add(obj);
+    }
+    else if (root.getType() == ASTNode.NodeType.RET){
+      str = root.getRight().getVal();
+      obj = new TACObject(TACObject.OpType.PARAM, str, null, null);
       tacs.add(obj);
     }
     
