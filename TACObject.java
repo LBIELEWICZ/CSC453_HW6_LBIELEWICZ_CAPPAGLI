@@ -2,7 +2,7 @@ import java.lang.String;
 
 public class TACObject {
 	enum OpType{
-		ASSIGN, PLUS, MINUS, MUL, DIV, IF_LT, IF_GT, IF_LTE, IF_GTE, IF_EQ, IF_NE, GOTO, LABLE;
+		ASSIGN, PLUS, MINUS, MUL, DIV, IF_LT, IF_GT, IF_LTE, IF_GTE, IF_EQ, IF_NE, GOTO, LABLE, PARAM, CALL, RETRIEVE, RETURN;
 	}
 
 	OpType op;
@@ -73,6 +73,18 @@ public class TACObject {
 		}
 		else if(op == OpType.LABLE){
 			str = src1 + "\n";
+		}
+		else if(op == OpType.PARAM){
+			str = "param " + src1 + "\n";
+		}
+		else if(op == OpType.CALL){
+			str = "call " + src1 + ", " + src2 + "\n";
+		}
+		else if(op == OpType.RETRIEVE){
+			str = "retrieve " + src1 + "\n";
+		}
+		else if(op == OpType.RETURN){
+			str = "return " + src1 + "\n";
 		}
 		return str;
 	}
